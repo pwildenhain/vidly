@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Heart from "./heart";
 import { getMovies } from "../services/fakeMovieService";
 
 class Movies extends Component {
@@ -36,6 +37,7 @@ class Movies extends Component {
               <th>Stock</th>
               <th>Rate</th>
               <th />
+              <th />
             </tr>
           </thead>
           <tbody>
@@ -45,6 +47,7 @@ class Movies extends Component {
                 <td>{movie.genre.name}</td>
                 <td>{movie.numberInStock}</td>
                 <td>{movie.dailyRentalRate}</td>
+                <td><Heart /></td>
                 <td>
                   <button
                     className="btn btn-danger btn-sm"
