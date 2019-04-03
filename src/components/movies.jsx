@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Heart from "./heart";
+import Heart from "./common/heart";
 import { getMovies } from "../services/fakeMovieService";
 
 class Movies extends Component {
@@ -16,6 +16,14 @@ class Movies extends Component {
     const movies = this.state.movies.filter(m => m._id !== movie._id);
     this.setState({ movies });
   };
+
+  handleHeart = movie => {
+    const movies = [...this.state.movies];
+    const index = movies.indexOf(movie);
+    movies[index] = {...movies[index]};
+    movies[index].liked = !movies[index].liked
+    this.setState({movies})
+  }
 
   // zen coding shortcut to create a table with heading, and 4 columns: //table.table>thead>tr>th*4
   // can even just simply do td*4 to generate 4 <td /> tags
@@ -47,7 +55,7 @@ class Movies extends Component {
                 <td>{movie.genre.name}</td>
                 <td>{movie.numberInStock}</td>
                 <td>{movie.dailyRentalRate}</td>
-                <td><Heart /></td>
+                <td><Heart liked={movie.liked} toggleHeart={() => this.handleHeart(movie)} /></td>
                 <td>
                   <button
                     className="btn btn-danger btn-sm"
