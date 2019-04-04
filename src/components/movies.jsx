@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import Heart from "./common/heart";
+import Pagination from "./common/pagination"  
 import { getMovies } from "../services/fakeMovieService";
 
 class Movies extends Component {
   state = {
-    movies: []
+    movies: [],
+    perPage: 4
   };
 
   componentWillMount() {
@@ -23,6 +25,10 @@ class Movies extends Component {
     movies[index] = {...movies[index]};
     movies[index].liked = !movies[index].liked
     this.setState({movies})
+  }
+
+  handlePageChange = page => {
+    console.log('Page Changed: ', page)
   }
 
   // zen coding shortcut to create a table with heading, and 4 columns: //table.table>thead>tr>th*4
@@ -68,6 +74,10 @@ class Movies extends Component {
             ))}
           </tbody>
         </table>
+        <Pagination 
+          totalItems={movie_count} 
+          perPage={this.state.perPage} 
+          onPageChange={this.handlePageChange}/>
       </React.Fragment>
     );
   }
