@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import Heart from "./common/heart";
+import MoviesTable from "./moviesTable";
 import Pagination from "./common/pagination";
 import { paginate } from "../utils/paginate";
 import ListGroup from "./common/listGroup";
+import _ from "lodash";
 import { getMovies } from "../services/fakeMovieService";
 import { getGenres } from "../services/fakeGenreService";
 
@@ -11,12 +12,13 @@ class Movies extends Component {
     movies: [],
     genres: [],
     perPage: 4,
-    currentPage: 1
+    currentPage: 1,
+    sortColumn: { path: "title", order: "asc" }
   };
 
   componentDidMount() {
     const movies = getMovies();
-    const genres = [{ name: "All Genres" }, ...getGenres()];
+    const genres = [{ _id: "", name: "All Genres" }, ...getGenres()];
     this.setState({ movies, genres });
   }
 
@@ -41,6 +43,10 @@ class Movies extends Component {
     this.setState({ selectedGenre: genre, currentPage: 1 });
   };
 
+  handleSort = sortColumn => {
+    this.setState({ sortColumn });
+  };
+
   // zen coding shortcut to create a table with heading, and 4 columns: //table.table>thead>tr>th*4
   // can even just simply do td*4 to generate 4 <td /> tags
 
@@ -51,7 +57,8 @@ class Movies extends Component {
       currentPage,
       movies: allMovies,
       genres,
-      selectedGenre
+      selectedGenre,
+      sortColumn
     } = this.state;
     if (movie_count === 0) {
       return <p>There are no movies in the database</p>;
@@ -62,7 +69,9 @@ class Movies extends Component {
         ? allMovies.filter(movie => movie.genre._id === selectedGenre._id)
         : allMovies;
 
-    const movies = paginate(filtered, currentPage, perPage);
+    const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
+
+    const movies = paginate(sorted, currentPage, perPage);
 
     return (
       <div className="row">
@@ -74,45 +83,16 @@ class Movies extends Component {
           />
         </div>
         <div className="col">
-          <p>Showing {filtered.length} movies in the database</p>
-          <table className="table thead-dark">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Genre</th>
-                <th>Stock</th>
-                <th>Rate</th>
-                <th />
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {movies.map(movie => (
-                <tr key={movie._id}>
-                  <td>{movie.title}</td>
-                  <td>{movie.genre.name}</td>
-                  <td>{movie.numberInStock}</td>
-                  <td>{movie.dailyRentalRate}</td>
-                  <td>
-                    <Heart
-                      liked={movie.liked}
-                      toggleHeart={() => this.handleHeart(movie)}
-                    />
-                  </td>
-                  <td>
-                    <button
-                      className="btn btn-danger btn-sm"
-                      onClick={() => this.handleDelete(movie)}
-                    >
-                      Delete
-                    </button>{" "}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <p>Showing {sorted.length} movies in the database</p>
+          <MoviesTable
+            movies={movies}
+            sortColumn={sortColumn}
+            onToggleHeart={this.handleHeart}
+            onDelete={this.handleDelete}
+            onSort={this.handleSort}
+          />
           <Pagination
-            totalItems={filtered.length}
+            totalItems={sorted.length}
             perPage={perPage}
             currentPage={currentPage}
             onPageChange={this.handlePageChange}
