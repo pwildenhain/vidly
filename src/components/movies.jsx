@@ -27,7 +27,7 @@ class Movies extends Component {
     this.setState({ movies });
   };
 
-  handleHeart = movie => {
+  handleToggleHeart = movie => {
     const movies = [...this.state.movies];
     const index = movies.indexOf(movie);
     movies[index] = { ...movies[index] };
@@ -47,22 +47,14 @@ class Movies extends Component {
     this.setState({ sortColumn });
   };
 
-  // zen coding shortcut to create a table with heading, and 4 columns: //table.table>thead>tr>th*4
-  // can even just simply do td*4 to generate 4 <td /> tags
-
-  render() {
-    const { length: movie_count } = this.state.movies;
+  getPagedData() {
     const {
-      perPage,
-      currentPage,
-      movies: allMovies,
-      genres,
       selectedGenre,
-      sortColumn
+      sortColumn,
+      currentPage,
+      perPage,
+      movies: allMovies
     } = this.state;
-    if (movie_count === 0) {
-      return <p>There are no movies in the database</p>;
-    }
 
     const filtered =
       selectedGenre && selectedGenre._id
@@ -72,6 +64,25 @@ class Movies extends Component {
     const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
 
     const movies = paginate(sorted, currentPage, perPage);
+
+    return { totalCount: filtered.length, movies };
+  }
+
+  render() {
+    const { length: movie_count } = this.state.movies;
+    const {
+      perPage,
+      currentPage,
+      genres,
+      selectedGenre,
+      sortColumn
+    } = this.state;
+
+    if (movie_count === 0) {
+      return <p>There are no movies in the database</p>;
+    }
+
+    const { totalCount, movies } = this.getPagedData();
 
     return (
       <div className="row">
@@ -83,16 +94,16 @@ class Movies extends Component {
           />
         </div>
         <div className="col">
-          <p>Showing {sorted.length} movies in the database</p>
+          <p>Showing {totalCount} movies in the database</p>
           <MoviesTable
             movies={movies}
             sortColumn={sortColumn}
-            onToggleHeart={this.handleHeart}
+            onToggleHeart={this.handleToggleHeart}
             onDelete={this.handleDelete}
             onSort={this.handleSort}
           />
           <Pagination
-            totalItems={sorted.length}
+            totalItems={totalCount}
             perPage={perPage}
             currentPage={currentPage}
             onPageChange={this.handlePageChange}
