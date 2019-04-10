@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import TableHeader from "./common/tableHeader";
 import Heart from "./common/heart";
+import Table from "./common/table";
 import PropTypes from "prop-types";
 
 class MoviesTable extends Component {
@@ -9,50 +9,44 @@ class MoviesTable extends Component {
     { path: "genre.name", label: "Genre" },
     { path: "numberInStock", label: "Number in Stock" },
     { path: "dailyRentalRate", label: "Daily Rental Rate" },
-    {},
-    {}
+    {
+      key: "heart",
+      content: movie => (
+        <Heart
+          liked={movie.liked}
+          toggleHeart={() => this.props.onToggleHeart(movie)}
+        />
+      )
+    },
+    {
+      key: "delete",
+      content: movie => (
+        <button
+          className="btn btn-danger btn-sm"
+          onClick={() => this.props.onDelete(movie)}
+        >
+          Delete
+        </button>
+      )
+    }
   ];
 
   render() {
-    const { movies, sortColumn, onToggleHeart, onDelete, onSort } = this.props;
+    const { movies, sortColumn, onSort } = this.props;
     return (
-      <table className="table thead-dark">
-        <TableHeader
-          columns={this.columns}
-          sortColumn={sortColumn}
-          onSort={onSort}
-        />
-        <tbody>
-          {movies.map(movie => (
-            <tr key={movie._id}>
-              <td>{movie.title}</td>
-              <td>{movie.genre.name}</td>
-              <td>{movie.numberInStock}</td>
-              <td>{movie.dailyRentalRate}</td>
-              <td>
-                <Heart
-                  liked={movie.liked}
-                  toggleHeart={() => onToggleHeart(movie)}
-                />
-              </td>
-              <td>
-                <button
-                  className="btn btn-danger btn-sm"
-                  onClick={() => onDelete(movie)}
-                >
-                  Delete
-                </button>{" "}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Table
+        columns={this.columns}
+        sortColumn={sortColumn}
+        onSort={onSort}
+        data={movies}
+      />
     );
   }
 }
 
 MoviesTable.propTypes = {
   movies: PropTypes.array.isRequired,
+  sortColumn: PropTypes.object,
   onToggleHeart: PropTypes.func,
   onDelete: PropTypes.func,
   onSort: PropTypes.func
