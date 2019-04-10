@@ -1,8 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const Heart = props => {
-  const { liked, toggleHeart } = props;
+const Heart = ({ liked, toggleHeart }) => {
   let heartClasses = "fa fa-heart";
   if (!liked) heartClasses += "-o";
   return (

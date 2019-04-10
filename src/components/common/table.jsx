@@ -3,8 +3,7 @@ import TableHeader from "./tableHeader";
 import TableBody from "./tableBody";
 import PropTypes from "prop-types";
 
-const Table = props => {
-  const { columns, sortColumn, onSort, data } = props;
+const Table = ({ columns, sortColumn, onSort, data }) => {
   return (
     <table className="table thead-dark">
       <TableHeader columns={columns} sortColumn={sortColumn} onSort={onSort} />
