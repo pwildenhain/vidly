@@ -1,13 +1,15 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 
 const NavBar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <span class="navbar-brand">Vidly</span>
+      <Link className="navbar-brand" to="/">
+        Vidly
+      </Link>
       <div className="navbar-nav">
         <NavLink className="nav-item nav-link" to="/movies">
-          Movies <span className="sr-only">(current)</span>
+          Movies
         </NavLink>
         <NavLink className="nav-item nav-link" to="/customers">
           Customers
